@@ -21,13 +21,13 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping("/index")
     public String home(){
         return "index";
     }
 
     // handler method to handle login request
-    @GetMapping("/")
+    @GetMapping("/login")
     public String login(){
         return "login";
     }

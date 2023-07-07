@@ -28,9 +28,17 @@ public class SpringScurity {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/static/**","/dist/**","/build/**","/plugin/**").permitAll()
+                        authorize.requestMatchers("/static/**","/dist/**","/build/**","/plugin/**", "/images/**").permitAll()
                                 .requestMatchers("/register/**").permitAll()
+                                .requestMatchers("/").permitAll()
                                 .requestMatchers("/index").permitAll()
+                                .requestMatchers("/news").permitAll()
+                                .requestMatchers("/add-news").permitAll()
+                                .requestMatchers("/edit-news/{id}").permitAll()
+                                .requestMatchers("/edit-news/**").permitAll()
+                                .requestMatchers("/news/edit/{id}").permitAll()
+                                .requestMatchers("/news/add").permitAll()
+                                .requestMatchers("/news/delete/{id}").permitAll()
                                 .requestMatchers("/index").hasRole("ADMIN")
                 ).formLogin(
                         form -> form

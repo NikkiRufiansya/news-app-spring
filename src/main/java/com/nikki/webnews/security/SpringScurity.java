@@ -1,6 +1,7 @@
 package com.nikki.webnews.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -27,37 +29,39 @@ public class SpringScurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/static/**","/dist/**","/build/**","/plugin/**", "/images/**").permitAll()
-                                .requestMatchers("/register/**").permitAll()
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers("/index").permitAll()
-                                .requestMatchers("/news").permitAll()
-                                .requestMatchers("/add-news").permitAll()
-                                .requestMatchers("/edit-news/{id}").permitAll()
-                                .requestMatchers("/edit-news/**").permitAll()
-                                .requestMatchers("/news/edit/{id}").permitAll()
-                                .requestMatchers("/news/add").permitAll()
-                                .requestMatchers("/news/delete/{id}").permitAll()
-                                .requestMatchers("/index").hasRole("ADMIN")
-                ).formLogin(
-                        form -> form
-                                .loginPage("/login")
-                                .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/index")
-                                .permitAll()
-                ).logout(
-                        logout -> logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .permitAll()
-                );
+        http.authorizeRequests((authorize) ->
+                authorize.requestMatchers(
+                                PathRequest.toStaticResources().atCommonLocations(),
+                                new AntPathRequestMatcher("/register/**"),
+                                new AntPathRequestMatcher("/api/**")
+                        ).permitAll()
+                        .requestMatchers("/", "/index", "/news", "/add-news", "/edit-news/{id}", "/edit-news/**", "/news/edit/{id}", "/news/add", "/news/delete/{id}", "/news/display/{id}").hasRole("ADMIN")
+        ).formLogin(
+                form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/index")
+                        .permitAll()
+        ).logout(
+                logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .logoutSuccessUrl("/login")
+                        .permitAll()
+        ).csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        );
         return http.build();
     }
+
+
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
+
+
 
 
 }

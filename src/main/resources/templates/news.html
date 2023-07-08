@@ -155,11 +155,12 @@
                                         <td th:text="${news.title}"></td>
                                         <td th:text="${news.description}"></td>
                                         <td>
-                                            <img th:if="${news.image != null}" th:src="@{'static/images/' + ${news.fileName}}" width="100" height="100" />
+<!--                                            <img th:if="${news.image != null}" th:src="@{'static/images/' + ${news.fileName}}" width="100" height="100" />-->
+                                            <img th:src="@{'/news/display/' + ${news.id}}" width="100" height="100" />
                                         </td>
                                         <td>
-                                            <a th:href="@{'/edit-news/' + ${news.id}}">Edit</a>
-                                            <a th:href="@{'/news/delete/' + ${news.id}}">Delete</a>
+                                            <a th:href="@{'/edit-news/' + ${news.id}}" class="btn btn-secondary">Edit</i></a>
+                                            <a th:href="@{'/news/delete/' + ${news.id}}" class="btn btn-danger">Delete</a>
                                         </td>
                                     </tr>
 

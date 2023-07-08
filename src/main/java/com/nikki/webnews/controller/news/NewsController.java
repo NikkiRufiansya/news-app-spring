@@ -3,6 +3,9 @@ package com.nikki.webnews.controller.news;
 
 import com.nikki.webnews.model.News;
 import com.nikki.webnews.repository.NewsRepository;
+import com.nikki.webnews.service.NewsService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +20,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
+
+import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Controller
 public class NewsController {
     @Autowired
     private NewsRepository newsRepository;
+
+    @Autowired
+    private NewsService newsService;
 
     @GetMapping("/news")
     public String viewHomePage(Model model) {
@@ -37,6 +46,17 @@ public class NewsController {
     }
 
 
+    @GetMapping("/news/display/{id}")
+    @ResponseBody
+    void showImage(@PathVariable("id") Long id, HttpServletResponse response, Optional<News> news) throws ServletException, IOException {
+        System.out.println("Id : " + id);
+        news = newsService.getNewsById(id);
+        response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
+        response.getOutputStream().write(news.get().getImage());
+        response.getOutputStream().close();
+
+    }
+
 
     @PostMapping("/news/add")
     public String addNews(@ModelAttribute("news") News news,
@@ -44,15 +64,8 @@ public class NewsController {
         if (!file.isEmpty()) {
             news.setImage(file.getBytes());
         }
-        String uploadDir = "src/main/resources/static/images/";
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        Path filePath = Paths.get(uploadDir + fileName);
-        Files.write(filePath, file.getBytes());
-
-        news.setImage(fileName.getBytes());
-        news.setFileName(fileName);
         newsRepository.save(news);
-        return "redirect:/";
+        return "redirect:/news";
     }
 
     @GetMapping("/edit-news/{id}")
@@ -75,16 +88,7 @@ public class NewsController {
         existingNews.setContent(news.getContent());
 
         if (!file.isEmpty()) {
-            byte[] imageBytes = file.getBytes();
-            existingNews.setImage(imageBytes);
-            existingNews.setFileName(file.getOriginalFilename());
-
-            // Simpan file gambar baru ke dalam direktori yang sesuai
-            String uploadDir = "src/main/resources/static/images/";
-            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            Path filePath = Paths.get(uploadDir + fileName);
-            Files.write(filePath, file.getBytes());
-            existingNews.setFileName(fileName);
+            existingNews.setImage(file.getBytes());
         }
 
         newsRepository.save(existingNews);

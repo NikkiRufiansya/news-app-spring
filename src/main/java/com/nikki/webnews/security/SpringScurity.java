@@ -33,14 +33,16 @@ public class SpringScurity {
                 authorize.requestMatchers(
                                 PathRequest.toStaticResources().atCommonLocations(),
                                 new AntPathRequestMatcher("/register/**"),
-                                new AntPathRequestMatcher("/api/**")
+                                new AntPathRequestMatcher("/api/**"),
+                                new AntPathRequestMatcher("/api/visitor/**"),
+                                new AntPathRequestMatcher("/api/devices")
                         ).permitAll()
-                        .requestMatchers("/", "/index", "/news", "/add-news", "/edit-news/{id}", "/edit-news/**", "/news/edit/{id}", "/news/add", "/news/delete/{id}", "/news/display/{id}").hasRole("ADMIN")
+                        .requestMatchers("/", "/index", "/news", "/add-news", "/edit-news/{id}", "/edit-news/**", "/news/edit/{id}", "/news/add", "/news/delete/{id}", "/news/display/{id}","/visitor/**").hasRole("ADMIN")
         ).formLogin(
                 form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/index")
+                        .defaultSuccessUrl("/")
                         .permitAll()
         ).logout(
                 logout -> logout
@@ -49,7 +51,7 @@ public class SpringScurity {
                         .clearAuthentication(true)
                         .logoutSuccessUrl("/login")
                         .permitAll()
-        ).csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        ).csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).disable()
         );
         return http.build();
     }

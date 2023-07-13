@@ -80,8 +80,7 @@ public class NewsController {
     public String updateNews(@PathVariable("id") long id,
                              @ModelAttribute("news") News news,
                              @RequestParam("imageFile") MultipartFile file) throws IOException {
-        News existingNews = newsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid news Id: " + id));
+        News existingNews = newsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid news Id: " + id));
 
         existingNews.setTitle(news.getTitle());
         existingNews.setDescription(news.getDescription());

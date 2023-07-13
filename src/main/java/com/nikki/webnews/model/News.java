@@ -12,11 +12,13 @@ public class News {
     private String title;
 
 
+    @Column(length = 100000000)
     private String content;
 
 
     private String fileName;
 
+    @Column(length = 100000000)
     private String description;
 
 
@@ -24,9 +26,6 @@ public class News {
     @Column(length = 1048576)
     private byte[] image;
 
-
-
-    // Constructors, getters, setters
 
     public Long getId() {
         return id;

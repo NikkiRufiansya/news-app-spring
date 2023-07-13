@@ -152,8 +152,8 @@
                                     </thead>
                                     <tbody>
                                     <tr th:each="news : ${newsList}">
-                                        <td th:text="${news.title}"></td>
-                                        <td th:text="${news.description}"></td>
+                                        <td style="max-width:100px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis"  th:text="${news.title}"></td>
+                                        <td style="max-width:100px; white-space: nowrap;overflow: hidden; text-overflow: ellipsis" th:text="${news.description}"></td>
                                         <td>
 <!--                                            <img th:if="${news.image != null}" th:src="@{'static/images/' + ${news.fileName}}" width="100" height="100" />-->
                                             <img th:src="@{'/news/display/' + ${news.id}}" width="100" height="100" />

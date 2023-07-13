@@ -31,4 +31,9 @@ public class NewsServiceImp implements NewsService  {
     public Optional<News> getNewsById(Long id) {
         return newsRepository.findById(id);
     }
+
+    @Override
+    public int getTotalNews() {
+        return newsRepository.getTotalNewsCount();
+    }
 }
